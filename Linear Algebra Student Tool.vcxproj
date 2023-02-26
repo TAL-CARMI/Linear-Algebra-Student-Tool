@@ -75,8 +75,8 @@
     <LibraryPath>C:\Users\talca\Documents\Linear Algebra Student Tool\Linear Algebra Student Tool\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\talca\Documents\Linear Algebra Student Tool\Linear Algebra Student Tool\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\talca\Documents\Linear Algebra Student Tool\Linear Algebra Student Tool\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Tal\Desktop\Linear Algebra Student Tool\Linear-Algebra-Student-Tool\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Tal\Desktop\Linear Algebra Student Tool\Linear-Algebra-Student-Tool\Libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
