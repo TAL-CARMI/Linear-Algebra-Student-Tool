@@ -12,7 +12,10 @@ public:
         window->SetSizer(sizer);
         window->Show();
         return true;
+
+        
     }
 };
+
 
 wxIMPLEMENT_APP(App);
