@@ -1,6 +1,6 @@
 .vs/
 x64/
-Linear Algebra Student Tool.sln
-Linear Algebra Student Tool.vcxproj
-Linear Algebra Student Tool.vcxproj.filters
-Linear Algebra Student Tool.vcxproj.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
