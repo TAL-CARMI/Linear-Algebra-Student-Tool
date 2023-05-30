@@ -7,12 +7,11 @@ void SingleModeWindow::Mockup(wxCommandEvent& event) {
 	{
 		for (int j = 0; j < m_matrix->GetCols(); j++)
 		{
-			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(1));
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(i+j));
 		}
 	}
 
 }
-
 
 SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
@@ -47,7 +46,7 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	controlSizer->Add(controlPanel, 1, wxEXPAND | wxALL, 10);
 
 	wxButton* button = new wxButton(controlPanel, 67, "YES");
-	button->Bind(wxEVT_BUTTON, &SingleModeWindow::Mockup, controlPanel);
+	button->Bind(wxEVT_BUTTON, &SingleModeWindow::Mockup, this);
 
 	rootSizer->Add(matrixSizer, 5, wxALL | wxALIGN_CENTER, 10);
 	rootSizer->Add(controlSizer, 2, wxALL | wxEXPAND, 10);
