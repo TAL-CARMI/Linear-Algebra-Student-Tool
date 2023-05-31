@@ -2,6 +2,7 @@
 #include "enumIDs.h"
 #include <string>
 #include <vector>
+#include <cmath>
 
 void SingleModeWindow::Reset(wxCommandEvent& event) {
 
@@ -14,6 +15,75 @@ void SingleModeWindow::Reset(wxCommandEvent& event) {
 	}
 }
 
+void SingleModeWindow::Copy(wxCommandEvent& event) 
+{
+	if (m_copyMatrix.size() != m_matrix->GetRows())
+	{
+		m_copyMatrix.resize(m_matrix->GetRows());
+	}
+
+	if (m_copyMatrix.at(0).size() != m_matrix->GetCols())
+	{
+		for (int i = 0; i < m_copyMatrix.size(); i++)
+		{
+			m_copyMatrix.at(i).resize(m_matrix->GetCols());
+		}
+	}
+
+	for (std::size_t i{ 0 }; i < m_matrix->GetRows(); i++)
+	{
+		for (std::size_t j{ 0 }; j < m_matrix->GetCols(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			m_copyMatrix.at(i).at(j) = static_cast<double>(value);
+		}
+	}
+
+
+}
+
+void SingleModeWindow::Paste(wxCommandEvent& event)
+{
+	if (m_matrix->GetRows() != m_copyMatrix.size())
+	{
+		wxLogMessage(wxString("Rows not equal"));
+		return;
+	}
+
+	if (m_matrix->GetCols() != m_copyMatrix.at(0).size())
+	{
+		wxLogMessage(wxString("Columns not equal"));
+		return;
+	}
+
+	for (int i = 0; i < m_matrix->GetRows(); i++)
+	{
+		for (int j = 0; j < m_matrix->GetCols(); j++)
+		{
+			double value = m_copyMatrix.at(i).at(j);
+			if(floor(value) != value)
+				dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(value));
+			else {
+				dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(static_cast<int>(value)));
+			}
+		}
+	}
+
+}
+
+void SingleModeWindow::IncreaseRows(wxCommandEvent& event)
+{
+	m_matrix->SetRows(m_matrix->GetRows() + 1);
+	for (int j = 0; j < m_matrix->GetCols(); j++)
+	{
+		wxTextCtrl* elementBox = new wxTextCtrl(event.GetEventObject()., wxID_ANY, "0", wxDefaultPosition, wxSize(50, 50), wxTE_CENTRE);
+		elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+		elementBox->SetForegroundColour(wxColor("White"));
+		m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+	}
+}
+
 SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
 	wxPanel* matrixPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition); //Container for the matrix.
@@ -23,10 +93,10 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	controlPanel->SetBackgroundColour(wxColor(46, 184, 255, 0.59));
 
 	/*Initalize a matrix using grid sizer*/
-	m_matrix = new wxGridSizer(8, 8, 0, 0);
-	for (int row = 0; row < 8; row++) // Change the number of rows
+	m_matrix = new wxGridSizer(3, 3, 0, 0);
+	for (int row = 0; row < 3; row++) // Change the number of rows
 	{
-		for (int col = 0; col < 8; col++) // Change the number of columns
+		for (int col = 0; col < 3; col++) // Change the number of columns
 		{
 			wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, "0", wxDefaultPosition, wxSize(50, 50), wxTE_CENTRE);
 			elementBox->SetBackgroundColour(wxColor(87, 173, 255));
@@ -123,21 +193,19 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	controlRow4->Add(bTrace, 1, wxEXPAND);
 
 	bReset->Bind(wxEVT_BUTTON, &SingleModeWindow::Reset, this);
+	bCopy->Bind(wxEVT_BUTTON, &SingleModeWindow::Copy, this);
+	bPaste->Bind(wxEVT_BUTTON, &SingleModeWindow::Paste, this);
+	bIncrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseRows, this);
 
 	rootSizer->Add(matrixSizer, 5, wxALL | wxALIGN_CENTER, 10);
 	rootSizer->Add(controlSizer, 2, wxALL | wxEXPAND, 10);
 
 	SetSizerAndFit(rootSizer);
 
-	// Create the log window
+	
 	wxLogWindow* logWindow = new wxLogWindow(NULL, "Log Window");
-
-	// Redirect log messages to the log window
 	wxLog::SetActiveTarget(logWindow);
+	
 
-	// Example usage: log messages
-	wxLogMessage(wxString(std::to_string(m_copyMatrix.at(0).at(0))));
-	wxLogWarning("This is a warning.");
-	wxLogError("This is an error.");
 }
 

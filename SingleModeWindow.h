@@ -10,6 +10,9 @@ private:
 	wxGridSizer* m_matrix;
 	std::vector<std::vector<double>> m_copyMatrix;
 	void Reset(wxCommandEvent &);
+	void Copy(wxCommandEvent &);
+	void Paste(wxCommandEvent&);
+	void IncreaseRows(wxCommandEvent&, wxWindow* matrixPanel);
 	
 	
 };
