@@ -21,7 +21,6 @@ bool MyApp::OnInit()
 	mainFrame->SetBackgroundColour(wxColor("White"));
 	mainFrame->Show(true);
 
-	
 	/*Initialize and set menu bar*/
 	MenubarInit(mainFrame);
 	//mainFrame->Mockup();
