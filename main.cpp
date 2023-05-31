@@ -2,6 +2,9 @@
 #include "enumIDs.h"
 #include "SingleModeWindow.h"
 #include "MenubarInit.h"
+#include <iostream>
+
+
 
 /*Application Class and implementation*/
 class MyApp : public wxApp
@@ -18,9 +21,12 @@ bool MyApp::OnInit()
 	mainFrame->SetBackgroundColour(wxColor("White"));
 	mainFrame->Show(true);
 
+	
 	/*Initialize and set menu bar*/
 	MenubarInit(mainFrame);
 	//mainFrame->Mockup();
+
 	return true;
+	
 }
 

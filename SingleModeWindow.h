@@ -8,7 +8,9 @@ public:
 	
 private:
 	wxGridSizer* m_matrix;
-	void Mockup(wxCommandEvent &);
+	std::vector<std::vector<double>> m_copyMatrix;
+	void Reset(wxCommandEvent &);
+	
 	
 };
 
