@@ -1,5 +1,33 @@
 #include "SingleModeWindow.h"
 
+void SingleModeWindow::SwapRows(int row1, int row2)
+{
+	std::vector<double> temp(m_matrix->GetCols());
+	for (int i = 0; i < temp.size(); i++)
+	{
+		double value;
+		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row1 * m_matrix->GetCols() + i)->GetWindow())->GetValue().ToCDouble(&value);
+		temp.at(i) = value;
+	}
+
+	for (int i = 0; i < temp.size(); i++)
+	{
+		wxString swapValue = dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row2 * m_matrix->GetCols() + i)->GetWindow())->GetValue();
+		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row1 * m_matrix->GetCols() + i)->GetWindow())->SetValue(swapValue);
+		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row2 * m_matrix->GetCols() + i)->GetWindow())->SetValue(std::to_string(temp.at(i)));
+	}
+}
+void SingleModeWindow::ScaleRow(int row, double scaler) 
+{
+	for (int i = 0; i < m_matrix->GetCols(); i++)
+	{
+		double value;
+		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row * m_matrix->GetCols() + i)->GetWindow())->GetValue().ToCDouble(&value);
+		value *= scaler;
+		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row * m_matrix->GetCols() + i)->GetWindow())->SetValue(std::to_string(value));
+	}
+}
+
 void SingleModeWindow::Reset(wxCommandEvent& event) {
 
 	for (int i = 0; i < m_matrix->GetRows(); i++)
@@ -35,6 +63,8 @@ void SingleModeWindow::Copy(wxCommandEvent& event)
 		}
 	}
 
+	ScaleRow(0, 5);
+
 }
 void SingleModeWindow::Paste(wxCommandEvent& event)
 {
@@ -66,6 +96,7 @@ void SingleModeWindow::Paste(wxCommandEvent& event)
 }
 void SingleModeWindow::IncreaseRows(wxCommandEvent& event)
 {
+	
 	m_matrix->SetRows(m_matrix->GetRows() + 1);
 	for (int j = 0; j < m_matrix->GetCols(); j++)
 	{
@@ -73,7 +104,6 @@ void SingleModeWindow::IncreaseRows(wxCommandEvent& event)
 		elementBox->SetBackgroundColour(wxColor(87, 173, 255));
 		elementBox->SetForegroundColour(wxColor("White"));
 		m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
-
 	}
 	Layout();
 	Refresh();
@@ -82,13 +112,13 @@ void SingleModeWindow::IncreaseRows(wxCommandEvent& event)
 void SingleModeWindow::IncreaseCols(wxCommandEvent& event)
 {
 	m_matrix->SetCols(m_matrix->GetCols() + 1);
-	for (int j = 0; j < m_matrix->GetRows(); j++)
+	for (int i = 0; i < m_matrix->GetRows(); i++)
 	{
 		wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxTE_CENTRE);
 		elementBox->SetBackgroundColour(wxColor(87, 173, 255));
 		elementBox->SetForegroundColour(wxColor("White"));
-		m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
-
+		//elementBox, 1, wxEXPAND | wxALL, 1);
+		m_matrix->Insert(i * m_matrix->GetCols() + (m_matrix->GetCols() - 1), elementBox, 1, wxEXPAND | wxALL, 1);
 	}
 	Layout();
 	Refresh();
