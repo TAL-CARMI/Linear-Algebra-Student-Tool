@@ -21,7 +21,11 @@ private:
 	void Paste(wxCommandEvent&);
 	void IncreaseRows(wxCommandEvent&);
 	void IncreaseCols(wxCommandEvent&);
+	void DecreaseRows(wxCommandEvent&);
+	void DecreaseCols(wxCommandEvent&);
 	void ToRowEchelon(wxCommandEvent&);
+	void ToReducedRowEchelon(wxCommandEvent&);
+
 
 };
 

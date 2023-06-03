@@ -1,4 +1,5 @@
 #include "AbstractMatrixFunctions.h"
+#include <cmath>
 
 void SwapRows(std::vector<std::vector<double>>& matrix, int row1, int row2)
 {
@@ -29,7 +30,6 @@ void AddRowValue(std::vector<std::vector<double>>& matrix, int row, int rowToAdd
 
 void RowEchelon(std::vector<std::vector<double>>& matrix)
 {
-	
 	int iteration = 0;
 	int rowLength = matrix.size();
 	int columnLength = matrix.at(0).size();
@@ -62,5 +62,26 @@ void RowEchelon(std::vector<std::vector<double>>& matrix)
 		iteration++;
 		columnPicker++;
 		rowNotFound = true;
+	}
+}
+
+void ReducedRowEchelon(std::vector<std::vector<double>>& matrix)
+{
+	int rowLength = matrix.size();
+	int columnLength = matrix.at(0).size();
+
+	int i = rowLength - 1;
+	while (i > 0)
+	{
+		for (int j = i - 1; j >= 0; j--)
+		{
+			AddRowValue(matrix, j, i, -matrix.at(j).at(i));
+		}
+		i--;
+	}
+
+	for (int i = 0; i < (rowLength < columnLength ? rowLength : columnLength); i++)
+	{
+		matrix.at(i).at(i) = abs(matrix.at(i).at(i));
 	}
 }

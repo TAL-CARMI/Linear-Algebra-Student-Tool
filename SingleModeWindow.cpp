@@ -15,7 +15,7 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	/*Initalize Panels*/
 	matrixPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition); //Container for the matrix.
 	matrixPanel->SetMaxClientSize(wxSize(500, 400));
-	matrixPanel->SetFont(wxFont(32, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+	matrixPanel->SetFont(wxFont(16, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	controlPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition); //Container for the controls.
 	controlPanel->SetBackgroundColour(wxColor(46, 184, 255, 0.59));
 	/*Initalize Panels*/
@@ -129,7 +129,10 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	bPaste->Bind(wxEVT_BUTTON, &SingleModeWindow::Paste, this);
 	bIncrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseRows, this);
 	bIncrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseCols, this);
-	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ToRowEchelon, this);
+	bDecrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseRows, this);
+	bDecrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseCols, this);
+	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ToReducedRowEchelon, this);
+
 	/*Bind all controls to events*/
 
 	/*Finalize Sizing*/
