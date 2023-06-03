@@ -4,9 +4,12 @@
 
 SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, title, pos, size)
 {
+	
 	/*Log Window*/
 	wxLogWindow* logWindow = new wxLogWindow(NULL, "Log Window");
 	wxLog::SetActiveTarget(logWindow);
+	
+
 	/*Log Window*/
 
 	/*Initalize Panels*/
@@ -126,6 +129,7 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	bPaste->Bind(wxEVT_BUTTON, &SingleModeWindow::Paste, this);
 	bIncrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseRows, this);
 	bIncrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseCols, this);
+	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ToRowEchelon, this);
 	/*Bind all controls to events*/
 
 	/*Finalize Sizing*/

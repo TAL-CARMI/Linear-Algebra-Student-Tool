@@ -1,32 +1,5 @@
 #include "SingleModeWindow.h"
-
-void SingleModeWindow::SwapRows(int row1, int row2)
-{
-	std::vector<double> temp(m_matrix->GetCols());
-	for (int i = 0; i < temp.size(); i++)
-	{
-		double value;
-		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row1 * m_matrix->GetCols() + i)->GetWindow())->GetValue().ToCDouble(&value);
-		temp.at(i) = value;
-	}
-
-	for (int i = 0; i < temp.size(); i++)
-	{
-		wxString swapValue = dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row2 * m_matrix->GetCols() + i)->GetWindow())->GetValue();
-		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row1 * m_matrix->GetCols() + i)->GetWindow())->SetValue(swapValue);
-		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row2 * m_matrix->GetCols() + i)->GetWindow())->SetValue(std::to_string(temp.at(i)));
-	}
-}
-void SingleModeWindow::ScaleRow(int row, double scaler) 
-{
-	for (int i = 0; i < m_matrix->GetCols(); i++)
-	{
-		double value;
-		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row * m_matrix->GetCols() + i)->GetWindow())->GetValue().ToCDouble(&value);
-		value *= scaler;
-		dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(row * m_matrix->GetCols() + i)->GetWindow())->SetValue(std::to_string(value));
-	}
-}
+#include "AbstractMatrixFunctions.h"
 
 void SingleModeWindow::Reset(wxCommandEvent& event) {
 
@@ -37,6 +10,31 @@ void SingleModeWindow::Reset(wxCommandEvent& event) {
 			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(0));
 		}
 	}
+
+	std::vector<std::vector<double>> matrix(4);
+	for (int i = 0; i < 4; i++)
+	{
+		matrix.at(i) = std::vector<double>(4);
+	}
+	
+	matrix.at(0) = { 1, 5, 3, 2 };
+	matrix.at(1) = { 0, 2, 0, 1 };
+	matrix.at(2) = { 1, 0, 1, 3 };
+	matrix.at(3) = { 1, 1, 1, 0 };
+
+	RowEchelon(matrix);
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			std::string value = std::to_string(matrix.at(i).at(j));
+			wxLogMessage(wxString(value));
+		}
+	}
+
+
+
 }
 void SingleModeWindow::Copy(wxCommandEvent& event)
 {
@@ -62,9 +60,6 @@ void SingleModeWindow::Copy(wxCommandEvent& event)
 			m_copyMatrix.at(i).at(j) = static_cast<double>(value);
 		}
 	}
-
-	ScaleRow(0, 5);
-
 }
 void SingleModeWindow::Paste(wxCommandEvent& event)
 {
@@ -123,4 +118,38 @@ void SingleModeWindow::IncreaseCols(wxCommandEvent& event)
 	Layout();
 	Refresh();
 	Update();
+}
+void SingleModeWindow::ToRowEchelon(wxCommandEvent& event) 
+{
+	std::vector<std::vector<double>> matrix(m_matrix->GetRows());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		matrix.at(i) = std::vector<double>(m_matrix->GetCols());
+	}
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+
+	RowEchelon(matrix);
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value = matrix.at(i).at(j);
+			if (floor(value) != value)
+				dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(value));
+			else {
+				dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(static_cast<int>(value)));
+			}
+		}
+	}
+
 }
