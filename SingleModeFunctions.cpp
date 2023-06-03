@@ -120,26 +120,43 @@ void SingleModeWindow::IncreaseCols(wxCommandEvent& event)
 }
 void SingleModeWindow::DecreaseRows(wxCommandEvent&)
 {
-	wxSizerItemList& items = m_matrix->GetChildren();
-	int numRows = m_matrix->GetRows();
-	int numCols = m_matrix->GetCols();
-
-	// Calculate the index of the first item in the last row
-	int startIndex = (numRows - 1) * numCols;
-
-	// Remove the items in the last row
-	for (int i = items.size() - 1; i >= startIndex; i--)
+	int newRowLength = m_matrix->GetRows() - 1;
+	int newColLength = m_matrix->GetCols();
+	std::vector<std::vector<double>> matrix(newRowLength);
+	for (int i = 0; i < matrix.size(); i++)
 	{
-		wxSizerItem* item = items[i];
-		m_matrix->Detach(item->GetWindow());
-
+		matrix.at(i) = std::vector<double>(newColLength);
 	}
-	m_matrix->SetRows(numRows - 1);
-	m_matrix->Layout();
 
-	matrixPanel->Layout();
-	matrixPanel->Refresh();
-	matrixPanel->Update();
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+	
+	matrixPanel->DestroyChildren();
+	m_matrix->SetRows(newRowLength);
+	m_matrix->SetCols(newColLength);
+	
+	for (int row = 0; row < newRowLength; row++) // Change the number of rows
+	{
+		for (int col = 0; col < newColLength; col++) // Change the number of columns
+		{
+			double value = matrix.at(row).at(col);
+			if ()
+			wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(value), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
+			elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+			elementBox->SetForegroundColour(wxColor("White"));
+			m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+		}
+	}
+	
+	Layout();
+
 }
 void SingleModeWindow::DecreaseCols(wxCommandEvent&)
 {
