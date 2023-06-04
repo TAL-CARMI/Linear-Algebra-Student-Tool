@@ -132,6 +132,9 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	bDecrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseRows, this);
 	bDecrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseCols, this);
 	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ToReducedRowEchelon, this);
+	bRank->Bind(wxEVT_BUTTON, &SingleModeWindow::Rank, this);
+	bRowDepend->Bind(wxEVT_BUTTON, &SingleModeWindow::RowDependency, this);
+	bColDepend->Bind(wxEVT_BUTTON, &SingleModeWindow::ColumnDependency, this);
 
 	/*Bind all controls to events*/
 

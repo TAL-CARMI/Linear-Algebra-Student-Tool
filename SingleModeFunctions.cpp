@@ -147,11 +147,22 @@ void SingleModeWindow::DecreaseRows(wxCommandEvent&)
 		for (int col = 0; col < newColLength; col++) // Change the number of columns
 		{
 			double value = matrix.at(row).at(col);
-			if ()
-			wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(value), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
-			elementBox->SetBackgroundColour(wxColor(87, 173, 255));
-			elementBox->SetForegroundColour(wxColor("White"));
-			m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+			if (floor(value) == value)
+			{
+				
+				wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(static_cast<int>(value)), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
+				elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+				elementBox->SetForegroundColour(wxColor("White"));
+				m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+			}
+			else
+			{
+				wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(value), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
+				elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+				elementBox->SetForegroundColour(wxColor("White"));
+				m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+			}
+			
 		}
 	}
 	
@@ -160,10 +171,53 @@ void SingleModeWindow::DecreaseRows(wxCommandEvent&)
 }
 void SingleModeWindow::DecreaseCols(wxCommandEvent&)
 {
-	int rowLength = m_matrix->GetRows();
-	int colLength = m_matrix->GetCols();
-	m_matrix->Detach((5, 3));
-	m_matrix->Layout();
+	int newRowLength = m_matrix->GetRows();
+	int newColLength = m_matrix->GetCols() - 1;
+	std::vector<std::vector<double>> matrix(newRowLength);
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		matrix.at(i) = std::vector<double>(newColLength);
+	}
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+
+	matrixPanel->DestroyChildren();
+	m_matrix->SetRows(newRowLength);
+	m_matrix->SetCols(newColLength);
+
+	for (int row = 0; row < newRowLength; row++) // Change the number of rows
+	{
+		for (int col = 0; col < newColLength; col++) // Change the number of columns
+		{
+			double value = matrix.at(row).at(col);
+			if (floor(value) == value)
+			{
+
+				wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(static_cast<int>(value)), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
+				elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+				elementBox->SetForegroundColour(wxColor("White"));
+				m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+			}
+			else
+			{
+				wxTextCtrl* elementBox = new wxTextCtrl(matrixPanel, wxID_ANY, std::to_string(value), wxDefaultPosition, wxDefaultSize, wxTE_CENTER);
+				elementBox->SetBackgroundColour(wxColor(87, 173, 255));
+				elementBox->SetForegroundColour(wxColor("White"));
+				m_matrix->Add(elementBox, 1, wxEXPAND | wxALL, 1);
+			}
+
+		}
+	}
+
+	Layout();
 }
 void SingleModeWindow::ToRowEchelon(wxCommandEvent& event)
 {
@@ -231,5 +285,107 @@ void SingleModeWindow::ToReducedRowEchelon(wxCommandEvent& event)
 				dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->SetValue(std::to_string(static_cast<int>(value)));
 			}
 		}
+	}
+}
+void SingleModeWindow::Rank(wxCommandEvent&)
+{
+	std::vector<std::vector<double>> matrix(m_matrix->GetRows());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		matrix.at(i) = std::vector<double>(m_matrix->GetCols());
+	}
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+	RowEchelon(matrix);
+	ReducedRowEchelon(matrix);
+
+	bool found = false;
+	int rank = 0;
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		int j = 0;
+		
+		while (j < matrix.at(0).size() && !found)
+		{
+			if (matrix.at(i).at(j) != 0)
+			{
+				found = true;
+				rank++;
+			}
+			j++;
+		}
+		found = false;
+	}
+
+	wxMessageDialog* dialog = new wxMessageDialog(NULL, std::to_string(rank), "Rank", wxOK);
+	dialog->ShowModal();
+}
+void SingleModeWindow::RowDependency(wxCommandEvent& event)
+{
+	std::vector<std::vector<double>> matrix(m_matrix->GetRows());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		matrix.at(i) = std::vector<double>(m_matrix->GetCols());
+	}
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+
+	int rank = GetRank(matrix);
+	if (rank == m_matrix->GetRows())
+	{
+		wxMessageDialog* dialog = new wxMessageDialog(NULL, "Rows are linearly independent", "Row Dependency", wxOK);
+		dialog->ShowModal();
+	}
+	else
+	{
+		wxMessageDialog* dialog = new wxMessageDialog(NULL, "Rows are linearly dependent", "Row Dependency", wxOK);
+		dialog->ShowModal();
+	}
+}
+
+void SingleModeWindow::ColumnDependency(wxCommandEvent& event)
+{
+	std::vector<std::vector<double>> matrix(m_matrix->GetRows());
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		matrix.at(i) = std::vector<double>(m_matrix->GetCols());
+	}
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		for (int j = 0; j < matrix.at(i).size(); j++)
+		{
+			double value;
+			dynamic_cast<wxTextCtrl*>(m_matrix->GetItem(i * m_matrix->GetCols() + j)->GetWindow())->GetValue().ToCDouble(&value);
+			matrix.at(i).at(j) = value;
+		}
+	}
+	int rank = GetRank(matrix);
+	wxMessageDialog* dialog;
+	if (rank == m_matrix->GetCols())
+	{
+		wxMessageDialog* dialog = new wxMessageDialog(NULL, "Columns are linearly independent", "Column Dependency", wxOK);
+		dialog->ShowModal();
+	}
+	else
+	{
+		wxMessageDialog* dialog = new wxMessageDialog(NULL, "Columns are linearly dependent", "Column Dependency", wxOK);
+		dialog->ShowModal();
 	}
 }

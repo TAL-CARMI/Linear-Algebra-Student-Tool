@@ -67,21 +67,52 @@ void RowEchelon(std::vector<std::vector<double>>& matrix)
 
 void ReducedRowEchelon(std::vector<std::vector<double>>& matrix)
 {
-	int rowLength = matrix.size();
-	int columnLength = matrix.at(0).size();
-
-	int i = rowLength - 1;
-	while (i > 0)
+	int rowLength = matrix.size(); 
+	int columnLength = matrix.at(0).size(); 
+	
+	int k = rowLength - 1;
+	int i = columnLength - 1; 
+	while (i > 0 && k > 0)
 	{
-		for (int j = i - 1; j >= 0; j--)
+		for (int j = rowLength - 2; j >= 0; j--) 
 		{
-			AddRowValue(matrix, j, i, -matrix.at(j).at(i));
+			AddRowValue(matrix, j, k, -matrix.at(j).at(i));
 		}
 		i--;
+		k--;
 	}
 
+	
 	for (int i = 0; i < (rowLength < columnLength ? rowLength : columnLength); i++)
 	{
 		matrix.at(i).at(i) = abs(matrix.at(i).at(i));
 	}
+	
+}
+
+int GetRank(std::vector<std::vector<double>>& matrix)
+{
+	RowEchelon(matrix);
+	ReducedRowEchelon(matrix);
+	bool found = false;
+	int rank = 0;
+	
+
+	for (int i = 0; i < matrix.size(); i++)
+	{
+		int j = 0;
+
+		while (j < matrix.at(0).size() && !found)
+		{
+			if (matrix.at(i).at(j) != 0)
+			{
+				found = true;
+				rank++;
+			}
+			j++;
+		}
+		found = false;
+	}
+
+	return rank;
 }

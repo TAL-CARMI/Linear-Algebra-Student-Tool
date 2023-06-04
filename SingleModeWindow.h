@@ -25,6 +25,9 @@ private:
 	void DecreaseCols(wxCommandEvent&);
 	void ToRowEchelon(wxCommandEvent&);
 	void ToReducedRowEchelon(wxCommandEvent&);
+	void Rank(wxCommandEvent&);
+	void RowDependency(wxCommandEvent&);
+	void ColumnDependency(wxCommandEvent&);
 
 
 };
