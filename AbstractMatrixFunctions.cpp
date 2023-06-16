@@ -28,91 +28,135 @@ void AddRowValue(std::vector<std::vector<double>>& matrix, int row, int rowToAdd
 	}
 }
 
-void RowEchelon(std::vector<std::vector<double>>& matrix)
+bool isRowZero(std::vector<std::vector<double>>& matrix, int row)
+{
+	int rowLength = matrix.at(row).size();
+
+	for (int i = 0; i < rowLength; i++)
+	{
+		if (matrix.at(row).at(i) != 0)
+			return false;
+	}
+
+	return true;
+}
+
+void MoveZeroRowsToBottom(std::vector<std::vector<double>>& matrix)
+{
+	int rowLength = matrix.size();
+	int row = 0;
+	int iteration = 0;
+	while (row < rowLength - 1 && iteration < rowLength - 1)
+	{
+		if (isRowZero(matrix, row))
+		{
+			SwapRows(matrix, row, row + 1);
+			SwapRows(matrix, row + 1, rowLength - 1);
+		}
+		else
+		{
+			row++;
+		}
+
+		iteration++;
+	}
+	for (int row = 0; row < rowLength - 1; row++)
+	{
+		if (isRowZero(matrix, row))
+		{
+			SwapRows(matrix, row, row + 1);
+			SwapRows(matrix, row + 1, rowLength - 1);
+		}
+	}
+}
+
+void StairifySqureOrWidthMatrix(std::vector<std::vector<double>>& matrix, int length)
 {
 	int iteration = 0;
-	int rowLength = matrix.size();
-	int columnLength = matrix.at(0).size();
-	int maxIteration = rowLength >= columnLength ? columnLength : rowLength;
-	int columnPicker = 0;
-	bool rowNotFound = true;
-	while (iteration < maxIteration)
+	bool nonZeroNotFound = true;
+	int prevRowFound = 0;
+	int row = 0;
+	while (iteration < length)
 	{
-		int i = iteration;
-		while (i < rowLength && rowNotFound)
+		int row = prevRowFound;
+		int chosenRow = 0;
+		while (row < length && nonZeroNotFound)
 		{
-			if (columnPicker < columnLength && matrix.at(i).at(columnPicker) != 0)
+			if (matrix.at(row).at(iteration) != 0)
 			{
-				rowNotFound = false;
+				nonZeroNotFound = false;
+				chosenRow = row;
+				prevRowFound = row + 1;
 			}
-			i++;
+
+			row++;
+		}
+		if (!nonZeroNotFound)
+		{
+			double reverseScalar = 1/(matrix.at(chosenRow).at(iteration));
+			ScaleRow(matrix, chosenRow, reverseScalar);
+			SwapRows(matrix, iteration, chosenRow);
+
+			for (int i = iteration + 1; i < length; i++)
+			{
+				double zeroScalar = (-1) * matrix.at(i).at(iteration);
+				AddRowValue(matrix, i, iteration, zeroScalar);
+			}
 		}
 
-		if (!rowNotFound)
-		{
-			ScaleRow(matrix, i - 1, 1 / matrix.at(i - 1).at(columnPicker));
-			SwapRows(matrix, iteration, i - 1);
-
-			for (int j = iteration + 1; j < rowLength; j++)
-			{
-				if (matrix.at(j).at(i - 1) != 0)
-					AddRowValue(matrix, j, i - 1, -(matrix.at(j).at(i - 1)));
-			}
-		}
 		iteration++;
-		columnPicker++;
-		rowNotFound = true;
+		nonZeroNotFound = true;
 	}
 }
 
-void ReducedRowEchelon(std::vector<std::vector<double>>& matrix)
+void StairifyTallMatrix(std::vector<std::vector<double>>& matrix, int length)
 {
-	int rowLength = matrix.size(); 
-	int columnLength = matrix.at(0).size(); 
-	
-	int k = rowLength - 1;
-	int i = columnLength - 1; 
-	while (i > 0 && k > 0)
+	int rowLength = matrix.size();
+	int iteration = 0;
+	bool nonZeroNotFound = true;
+	int prevRowFound = 0;
+	int row = 0;
+	while (iteration < length)
 	{
-		for (int j = rowLength - 2; j >= 0; j--) 
+		row = prevRowFound;
+		int chosenRow = 0;
+		while (row < rowLength && nonZeroNotFound)
 		{
-			AddRowValue(matrix, j, k, -matrix.at(j).at(i));
-		}
-		i--;
-		k--;
-	}
-
-	
-	for (int i = 0; i < (rowLength < columnLength ? rowLength : columnLength); i++)
-	{
-		matrix.at(i).at(i) = abs(matrix.at(i).at(i));
-	}
-	
-}
-
-int GetRank(std::vector<std::vector<double>>& matrix)
-{
-	RowEchelon(matrix);
-	ReducedRowEchelon(matrix);
-	bool found = false;
-	int rank = 0;
-	
-
-	for (int i = 0; i < matrix.size(); i++)
-	{
-		int j = 0;
-
-		while (j < matrix.at(0).size() && !found)
-		{
-			if (matrix.at(i).at(j) != 0)
+			if (matrix.at(row).at(iteration) != 0)
 			{
-				found = true;
-				rank++;
+				nonZeroNotFound = false;
+				chosenRow = row;
+				prevRowFound = row + 1;
 			}
-			j++;
+			row++;
 		}
-		found = false;
-	}
+		if (!nonZeroNotFound)
+		{
+			double reverseScalar = 1 / (matrix.at(chosenRow).at(iteration));
+			ScaleRow(matrix, chosenRow, reverseScalar);
+			SwapRows(matrix, iteration, chosenRow);
 
-	return rank;
+			for (int i = iteration + 1; i < rowLength; i++)
+			{
+				double zeroScalar = (-1) * matrix.at(i).at(iteration);
+				AddRowValue(matrix, i, iteration, zeroScalar);
+			}
+
+		}
+
+		iteration++;
+		nonZeroNotFound = true;
+	}
+}
+
+void Stairify(std::vector<std::vector<double>>& matrix)
+{
+	int rowLength = matrix.size();
+	int colLength = matrix.at(0).size();
+	if (rowLength <= colLength)
+		StairifySqureOrWidthMatrix(matrix, rowLength);
+	else
+		StairifyTallMatrix(matrix, colLength);
+
+	MoveZeroRowsToBottom(matrix);
 }

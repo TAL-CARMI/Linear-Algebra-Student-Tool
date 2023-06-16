@@ -6,8 +6,7 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 {
 	
 	/*Log Window*/
-	wxLogWindow* logWindow = new wxLogWindow(NULL, "Log Window");
-	wxLog::SetActiveTarget(logWindow);
+	
 	
 
 	/*Log Window*/
@@ -131,10 +130,7 @@ SingleModeWindow::SingleModeWindow(const wxString& title, const wxPoint& pos, co
 	bIncrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::IncreaseCols, this);
 	bDecrRows->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseRows, this);
 	bDecrCols->Bind(wxEVT_BUTTON, &SingleModeWindow::DecreaseCols, this);
-	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ToReducedRowEchelon, this);
-	bRank->Bind(wxEVT_BUTTON, &SingleModeWindow::Rank, this);
-	bRowDepend->Bind(wxEVT_BUTTON, &SingleModeWindow::RowDependency, this);
-	bColDepend->Bind(wxEVT_BUTTON, &SingleModeWindow::ColumnDependency, this);
+	bRowEchelon->Bind(wxEVT_BUTTON, &SingleModeWindow::ReducedRowEchelon, this);
 
 	/*Bind all controls to events*/
 
